@@ -1,0 +1,227 @@
+{
+	"info": {
+		"_postman_id": "8a85626d-64e9-48ab-aac3-4cf5c7273a47",
+		"name": "Cat Fact Ninja API Tests",
+		"description": "A collection of tests for the Cat Fact Ninja API.\n\n1. Validate response for /fact & /facts endpoints\n    \n2. Perfomance test for /fact endpoint\n    \n3. Error handling test for /fact endpoint",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29429125",
+		"_collection_link": "https://blue-station-877547.postman.co/workspace/New-Team-Workspace~11421332-2f24-4f57-a2d8-d56ed1b33bde/collection/29429125-8a85626d-64e9-48ab-aac3-4cf5c7273a47?action=share&source=collection_link&creator=29429125"
+	},
+	"item": [
+		{
+			"name": "Functional tests",
+			"item": [
+				{
+					"name": "Validate Get Random Cat Fact return fact",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has a fact\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fact).to.be.a('string').and.not.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://catfact.ninja/fact",
+							"protocol": "https",
+							"host": [
+								"catfact",
+								"ninja"
+							],
+							"path": [
+								"fact"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate Response structure for list of cat facts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate Response Structure\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"\r",
+									"    // Validate root level keys\r",
+									"    pm.expect(jsonData).to.have.property('current_page').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('data').that.is.an('array');\r",
+									"    pm.expect(jsonData).to.have.property('first_page_url').that.is.a('string');\r",
+									"    pm.expect(jsonData).to.have.property('from').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('last_page').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('last_page_url').that.is.a('string');\r",
+									"    pm.expect(jsonData).to.have.property('links').that.is.an('array');\r",
+									"    pm.expect(jsonData).to.have.property('next_page_url').that.is.a('string');\r",
+									"    pm.expect(jsonData).to.have.property('path').that.is.a('string');\r",
+									"    pm.expect(jsonData).to.have.property('per_page').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('prev_page_url').that.is.a('null');\r",
+									"    pm.expect(jsonData).to.have.property('to').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('total').that.is.a('number');\r",
+									"\r",
+									"    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://catfact.ninja/facts?limit=1&max_length={{max_length}}",
+							"protocol": "https",
+							"host": [
+								"catfact",
+								"ninja"
+							],
+							"path": [
+								"facts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "1"
+								},
+								{
+									"key": "max_length",
+									"value": "{{max_length}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Focuses on testing the core functionality of the API."
+		},
+		{
+			"name": "Performance test",
+			"item": [
+				{
+					"name": "Response Time Test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://catfact.ninja/fact",
+							"protocol": "https",
+							"host": [
+								"catfact",
+								"ninja"
+							],
+							"path": [
+								"fact"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Contains tests to ensure the API performs within acceptable time limits."
+		},
+		{
+			"name": "Error Handling tests",
+			"item": [
+				{
+					"name": "Invalid Endpoint Test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Error message is returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.equal(\"Not Found\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://catfact.ninja/invalid",
+							"protocol": "https",
+							"host": [
+								"catfact",
+								"ninja"
+							],
+							"path": [
+								"invalid"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Handles tests for scenarios where the API should return errors, such as invalid endpoints"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "max_length",
+			"value": "140",
+			"type": "string"
+		}
+	]
+}
